@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" class="desktop" data-ng-app="ullo">
+<html xmlns="http://www.w3.org/1999/xhtml" class="desktop" ng-app="ullo">
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -15,27 +15,49 @@
 </head>
 <body>
     <div class="screen">
-        <div class="page navigation" data-ng-controller="testCtrl">
-			<div class="inner splash">
+        <div class="page navigation" ng-controller="TestCtrl">
+			<div class="inner"><!-- splash -->
 				<section class="vertical brand">
 					<div class="inner">
 						<div class="logo sm"><img src="/img/logo_ullo_1.png" class="bounce infinite animated" /></div>
-                        <p style="font-size:20px">
-                            <br>
-                            <span data-ng-bind="model.title"></span>
-                            <br>
-                            <span data-ng-bind="model.description" data-ng-click="onClick()"></span>
-                        </p>
-                        <!-- pipe = filtri per formattazione, json riconverte lo stream in json. es. data-ng-bind="model.items | json" -->
-                        <!-- $index si può utilizzare solo all'interno di un repeater -->
-                        <p data-ng-repeat="item in model.items">{{item.user.userName}} {{item.dish.name}}
-                            <img src="http://ulloapi.wslabs.it/{{item.picture.route}}" style="width:80px">
-                        </p>
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="card-headline h5">
+                                    <div class="left">
+                                        <b class="text-strong" ng-bind="model.label" ng-click="loadStream()"></b>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="card-headline h5">
+                                    <div class="left">
+                                        <img src="http://ulloapi.wslabs.it/{{item.picture.route}}?media=xs" />
+                                        <br><b class="text-strong" ng-bind="item.dish.name"></b>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card" ng-repeat="item in items">
+                            <div class="card-content">
+                                <div class="card-headline h5">
+                                    <div class="left">
+                                        <img src="http://ulloapi.wslabs.it/{{item.picture.route}}?media=xs" />
+                                        <br><b class="text-strong" ng-bind="item.dish.name"></b>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 					</div>
 				</section>
 			</div>
 		</div>
     </div>
+    <!-- templates -->
+    <script type="text/ng-template" id="temp.html">
+        <p>This is the content of the template</p>
+    </script>
 	<!-- js -->
 	<script src="js/vendors/angular.js"></script>
     <script src="js/app/app.js"></script>
