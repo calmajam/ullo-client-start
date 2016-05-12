@@ -1,8 +1,80 @@
 /*global angular,FB */
 
-var app = angular.module('ullo', []);
+var app = angular.module('ullo', ['ngRoute']);
+
+
+app.controller('SignInCtrl', ['$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
+
+    $scope.model = {};
+
+    $scope.signin = function () {
+
+        $scope.busy = true;
+
+        $http.post('http://ulloapi.wslabs.it/api/users/signin', $scope.model).then(function (success) {
+            console.log('signin', success);
+
+        }, function (error) {
+            console.log('error', error);
+
+        }).finally(function () {
+            $timeout(function () {
+                $scope.busy = false;
+            }, 2000);
+        });
+    }
+
+}]);
+
+
+app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
+    
+    $routeProvider.when('/stream', {
+        title: 'Stream',
+        templateUrl: 'templates/stream.html',
+        controller: 'StreamCtrl'
+
+    }).when('/signin', {
+        title: 'Sign In',
+        templateUrl: 'templates/signin-test.html',
+        controller: 'SignInCtrl'
+
+    }).when('/signup', {
+        title: 'Sign Up',
+        templateUrl: 'templates/signup.html',
+        controller: 'SignupCtrl'
+
+    }).when('/dishes/:dishId', {
+        title: 'Dishes',
+        templateUrl: 'templates/test.html',
+        controller: 'TestCtrl'
+
+    }).when('/test', {
+        title: 'Test',
+        templateUrl: 'templates/test.html',
+        controller: 'TestCtrl'
+
+    }).when('/404', {
+        title: 'Error 404',
+        templateUrl: '404.html'
+
+    }).when('/', {
+        title: 'Homepage',
+        templateUrl: 'templates/test.html',
+        controller: 'TestCtrl'
+
+    });
+
+    $routeProvider.otherwise('/404');
+
+    // HTML5 MODE url writing method (false: #/anchor/use, true: /html5/url/use)
+    $locationProvider.html5Mode(true);
+}]);
 
 app.controller('TestCtrl', ['$scope', '$timeout', '$http', function ($scope, $timeout, $http) {
+
+    
+
 
     $scope.model = {
         label: 'Carica',

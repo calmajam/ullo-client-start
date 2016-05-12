@@ -9,65 +9,73 @@
     <base href="/" target="_self">
     <title>Ullo</title>
     <link rel="shortcut icon" href="/img/icons/favicon.ico">
-	<!-- css -->
+    <!-- css -->
     <link href="css/bootstrap-3/bootstrap.min.css" rel="stylesheet">
     <link href="css/app.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="screen">
-        <div class="page navigation" ng-controller="TestCtrl">
-			<div class="inner"><!-- splash -->
-				<section class="vertical brand">
-					<div class="inner">
-						<div class="logo sm"><img src="/img/logo_ullo_1.png" class="bounce infinite animated" /></div>
-                        <div class="card">
-                            <div class="card-content">
-                                <div class="card-headline h5">
-                                    <div class="left">
-                                        <b class="text-strong" ng-bind="model.label" ng-click="loadStream()"></b>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-content">
-                                <div class="card-headline h5">
-                                    <div class="left">
-                                        <img src="http://ulloapi.wslabs.it/{{item.picture.route}}?media=xs" />
-                                        <br><b class="text-strong" ng-bind="item.dish.name"></b>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card" ng-repeat="item in items">
-                            <div class="card-content">
-                                <div class="card-headline h5">
-                                    <div class="left">
-                                        <img src="http://ulloapi.wslabs.it/{{item.picture.route}}?media=xs" />
-                                        <br><b class="text-strong" ng-bind="item.dish.name"></b>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-					</div>
-				</section>
-			</div>
-		</div>
+        <ng-view class="page navigation">loading...</ng-view>
     </div>
     <!-- templates -->
-    <script type="text/ng-template" id="temp.html">
-        <p>This is the content of the template</p>
+    <script type="text/ng-template" id="templates/signin-test.html">
+        <form name="signinForm" novalidate ng-submit="signinForm.$valid && signin()">
+            <input type="email" placeholder="username" class="form-control" required ng-model="model.userName"/>
+            <input type="password" placeholder="password" class="form-control" required ng-model="model.password" />
+            <button type="submit" class="btn btn-cta" ng-hide="busy">Sign In</button>
+        </form>
     </script>
-	<!-- js -->
-	<script src="js/vendors/angular.js"></script>
+
+    <script type="text/ng-template" id="templates/temp.html">
+        <div class="inner">
+            <!-- splash -->
+            <section class="vertical brand">
+                <div class="inner">
+                    <div class="logo sm"><img src="/img/logo_ullo_1.png" class="bounce infinite animated" /></div>
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="card-headline h5">
+                                <div class="left">
+                                    <b class="text-strong" ng-bind="model.label" ng-click="loadStream()"></b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="card-headline h5">
+                                <div class="left">
+                                    <img ng-src="http://ulloapi.wslabs.it/{{item.picture.route}}?media=xs" />
+                                    <br><b class="text-strong" ng-bind="item.dish.name"></b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" ng-repeat="item in items track by $index">
+                        <div class="card-content">
+                            <div class="card-headline h5">
+                                <div class="left">
+                                    <img ng-src="http://ulloapi.wslabs.it/{{item.picture.route}}?media=xs" />
+                                    <br><b class="text-strong" ng-bind="item.dish.name"></b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </script>
+    <!-- js -->
+    <script src="js/vendors/angular.js"></script>
+    <script src="js/vendors/angular-route.js"></script>
     <script src="js/app/app.js"></script>
-	<!--
+    <!--
     <script src="js/vendors.min.js"></script>
     <script src="js/app.min.js"></script>
-	-->
-	<!-- fonts -->
+    -->
+    <!-- fonts -->
     <link href='https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:400,300,700' rel='stylesheet' type='text/css'>
-	<!-- icons -->
+    <!-- icons -->
     <link href="https://file.myfontastic.com/4VazGfRZHD4neBHyd978RP/icons.css" rel="stylesheet">
 </body>
 </html>
