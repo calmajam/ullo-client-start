@@ -2,85 +2,78 @@
 
 var app = angular.module('ullo', ['ngRoute']);
 
+app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
 
-app.controller('SignInCtrl', ['$scope', '$http', '$timeout', function ($scope, $http, $timeout) {
+	$routeProvider.when('/', {                
+        controller: 'SignInCtrl',
+        templateUrl: 'templates/signin-test.html',
+        title: 'Sign In',
+        
+    }).when('/signin', {                
+        controller: 'SignInCtrl',
+        templateUrl: 'templates/signin-test.html',
+        title: 'Sign In',
+        
+    }).when('/stream', {        
+        controller: 'TestCtrl',
+        templateUrl: 'templates/test.html',
+        title: 'TestCtrl',
+        
+    }).when('/dishes/:dishId', {        
+        controller: 'TestCtrl',
+        templateUrl: 'templates/test.html',
+        title: 'Dishes',
+        
+    }).when('/test', {                
+        controller: 'TestCtrl',
+        templateUrl: 'templates/temp.html',
+        title: 'HomePage',
+        
+    }).when('/404', {
+        controller: 'TestCtrl',
+        templateUrl: 'templates/test.html',
+        title: 'Errore 404',
+        
+    });
+    
+    $routeProvider.otherwise('/404');
+    
+    // HTML5 MODE url writing method (false: #/anchor/use, true: /html5/url/use)
+    $locationProvider.html5Mode(true);
+    
+}]);
+
+app.controller('SignInCtrl', ['$scope', '$timeout', '$http', '$location', function ($scope, $timeout, $http, $location) {
 
     $scope.model = {};
 
     $scope.signin = function () {
-
-        $scope.busy = true;
-
-        $http.post('http://ulloapi.wslabs.it/api/users/signin', $scope.model).then(function (success) {
-            console.log('signin', success);
-
-        }, function (error) {
-            console.log('error', error);
-
-        }).finally(function () {
-            $timeout(function () {
-                $scope.busy = false;
-            }, 2000);
-        });
-    }
-
-}]);
-
-
-app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
+        $scope.signinFormError = null;
+        $scope.signinFormBusy = true;
+        $timeout(function() {
+            $http.post('http://ulloapi.wslabs.it/api/users/signin', $scope.model).then(function(success) {
+                console.log('signin', success);
+                $location.path('/stream');
+            }, function(error) {
+                console.log('error', error);
+                $scope.signinFormError = { message: error.message };
+            }).finally(function() {
+                $timeout(function() {
+                    $scope.signinFormBusy = false;
+                }, 3000);
+            });
+        }, 1000);
+    };
     
-    $routeProvider.when('/stream', {
-        title: 'Stream',
-        templateUrl: 'templates/stream.html',
-        controller: 'StreamCtrl'
-
-    }).when('/signin', {
-        title: 'Sign In',
-        templateUrl: 'templates/signin-test.html',
-        controller: 'SignInCtrl'
-
-    }).when('/signup', {
-        title: 'Sign Up',
-        templateUrl: 'templates/signup.html',
-        controller: 'SignupCtrl'
-
-    }).when('/dishes/:dishId', {
-        title: 'Dishes',
-        templateUrl: 'templates/test.html',
-        controller: 'TestCtrl'
-
-    }).when('/test', {
-        title: 'Test',
-        templateUrl: 'templates/test.html',
-        controller: 'TestCtrl'
-
-    }).when('/404', {
-        title: 'Error 404',
-        templateUrl: '404.html'
-
-    }).when('/', {
-        title: 'Homepage',
-        templateUrl: 'templates/test.html',
-        controller: 'TestCtrl'
-
-    });
-
-    $routeProvider.otherwise('/404');
-
-    // HTML5 MODE url writing method (false: #/anchor/use, true: /html5/url/use)
-    $locationProvider.html5Mode(true);
 }]);
-
+    
 app.controller('TestCtrl', ['$scope', '$timeout', '$http', function ($scope, $timeout, $http) {
-
-    
-
 
     $scope.model = {
         label: 'Carica',
     };
-    
-    $timeout(function() {
+        
+    setTimeout(function() {
         $scope.model.label = 'Carica Stream';
     }, 1000);
 
@@ -125,8 +118,8 @@ app.controller('TestCtrl', ['$scope', '$timeout', '$http', function ($scope, $ti
     };
     
     $scope.loadStream = function() {
-        $http.get('http://ulloapi.wslabs.it/api/stream/anonymous').then(function(success){
-            $scope.items = success.data;
+        $http.get('http://ulloapi.wslabs.it/api/stream/anonymous').then(function(response){
+            $scope.items = response.data;
         }, function(error) {
             console.log('error', error);
         });

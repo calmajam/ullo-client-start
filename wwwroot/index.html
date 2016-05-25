@@ -9,73 +9,114 @@
     <base href="/" target="_self">
     <title>Ullo</title>
     <link rel="shortcut icon" href="/img/icons/favicon.ico">
-    <!-- css -->
+	<!-- css -->
     <link href="css/bootstrap-3/bootstrap.min.css" rel="stylesheet">
     <link href="css/app.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="screen">
+    <div class="screen" ng-cloak>
         <ng-view class="page navigation">loading...</ng-view>
     </div>
     <!-- templates -->
     <script type="text/ng-template" id="templates/signin-test.html">
-        <form name="signinForm" novalidate ng-submit="signinForm.$valid && signin()">
-            <input type="email" placeholder="username" class="form-control" required ng-model="model.userName"/>
-            <input type="password" placeholder="password" class="form-control" required ng-model="model.password" />
-            <button type="submit" class="btn btn-cta" ng-hide="busy">Sign In</button>
-        </form>
-    </script>
-
-    <script type="text/ng-template" id="templates/temp.html">
-        <div class="inner">
-            <!-- splash -->
-            <section class="vertical brand">
+        <div class="inner signin">
+            <section class="vertical header">
+                <div class="inner left">
+                    <div class="logo sm" animate="bounceIn" delay="500" ng-click="goStream()">            
+                        <img src="/img/logo_ullo_1.png" class="bounce infinite" ng-class="{ animated: signinFormBusy }" />
+                    </div>
+                </div>
+                <div class="inner center">
+                    &nbsp;
+                </div>
+                <div class="inner right">
+                    &nbsp;             
+                </div>
+            </section>
+            <section class="scrollable content">
                 <div class="inner">
-                    <div class="logo sm"><img src="/img/logo_ullo_1.png" class="bounce infinite animated" /></div>
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="card-headline h5">
-                                <div class="left">
-                                    <b class="text-strong" ng-bind="model.label" ng-click="loadStream()"></b>
+                    <br>    
+                    <form name="signinForm" role="form" novalidate autocomplete="off" ng-submit="!signinFormBusy && signinForm.$valid && signin()">
+                        <div class="container-fluid">                    
+                            <div class="row" animate="fadeInUp" delay="300">
+                                <div class="form-group col-xs-12">
+                                    <label for="Username">Username <span class="text-danger" ng-if="signinForm.Username.$error.required">required</span></label>
+                                    <input name="Username" type="text" placeholder="username" class="form-control" ng-model="model.username" required />
+                                    
+                                </div>
+                                <div class="form-group col-xs-12" form="signinForm" control="password" title="Password" placeholder="type your password" model="model.password" required="true">
+                                    <label for="Password">Password <span class="text-danger" ng-if="signinForm.Password.$error.required">required</span></label>
+                                    <input name="Password" type="password" placeholder="password" required class="form-control" ng-model="model.password" />
+                                    
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="card-headline h5">
-                                <div class="left">
-                                    <img ng-src="http://ulloapi.wslabs.it/{{item.picture.route}}?media=xs" />
-                                    <br><b class="text-strong" ng-bind="item.dish.name"></b>
-                                </div>
+                            <div animate="fadeInUp" delay="600">
+                                <br>
+                                <br>
+                                <p class="bg-danger" style="padding:10px;" ng-if="signinFormError" ng-bind="signinFormError.message || 'error'"></p>
+                                <button type="submit" ng-class="{ busy: signinFormBusy }" ng-disabled="signinForm.$invalid" class="btn btn-primary btn-block">
+                                    <span ng-if="!signinFormBusy">SIGN IN</span><span ng-if="signinFormBusy">SIGNING IN</span>
+                                </button>
+                                <div class="divline"><span>OR</span></div>
+                                <a ng-href="/signup" class="btn btn-default btn-sm btn-block">SIGN UP</a>
                             </div>
                         </div>
-                    </div>
-                    <div class="card" ng-repeat="item in items track by $index">
-                        <div class="card-content">
-                            <div class="card-headline h5">
-                                <div class="left">
-                                    <img ng-src="http://ulloapi.wslabs.it/{{item.picture.route}}?media=xs" />
-                                    <br><b class="text-strong" ng-bind="item.dish.name"></b>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </section>
         </div>
+            
     </script>
-    <!-- js -->
-    <script src="js/vendors/angular.js"></script>
+    <script type="text/ng-template" id="templates/temp.html">
+        
+			<div class="inner"><!-- splash -->
+				<section class="vertical brand">
+					<div class="inner">
+						<div class="logo sm"><img src="/img/logo_ullo_1.png" class="bounce infinite animated" /></div>
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="card-headline h5">
+                                    <div class="left">
+                                        <b class="text-strong" ng-bind="model.label" ng-click="loadStream()"></b>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="card-headline h5">
+                                    <div class="left">
+                                        <img ng-src="http://ulloapi.wslabs.it/{{item.picture.route}}?media=xs" />
+                                        <br><b class="text-strong" ng-bind="item.dish.name"></b>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card" ng-repeat="oggetto in items track by $index">
+                            <div class="card-content">
+                                <div class="card-headline h5">
+                                    <div class="left">
+                                        <img ng-src="http://ulloapi.wslabs.it/{{item.picture.route}}?media=xs" />
+                                        <br><b class="text-strong" ng-bind="item.dish.name"></b>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+				</section>
+			</div>
+    </script>
+	<!-- js -->
+	<script src="js/vendors/angular.js"></script>
     <script src="js/vendors/angular-route.js"></script>
     <script src="js/app/app.js"></script>
-    <!--
+	<!--
     <script src="js/vendors.min.js"></script>
     <script src="js/app.min.js"></script>
-    -->
-    <!-- fonts -->
+	-->
+	<!-- fonts -->
     <link href='https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:400,300,700' rel='stylesheet' type='text/css'>
-    <!-- icons -->
+	<!-- icons -->
     <link href="https://file.myfontastic.com/4VazGfRZHD4neBHyd978RP/icons.css" rel="stylesheet">
 </body>
 </html>

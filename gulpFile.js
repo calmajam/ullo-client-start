@@ -280,7 +280,7 @@ gulp.task('serve', ['compile'], function() {
         middleware: [
             rewrite([
                 '!\\.html|\\.js|\\.css|\\.map|\\.svg|\\.jp(e?)g|\\.png|\\.gif$ /index.html'
-            ])
+            ]),
         ],
         livereload: {
             enable: true, // need this set to true to enable livereload
