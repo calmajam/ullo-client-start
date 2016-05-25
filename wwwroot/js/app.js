@@ -1,6 +1,6 @@
 /*global angular,FB */
 
-var app = angular.module('ullo', ['ngRoute']);
+var app = angular.module('ullo', ['ngRoute', 'ngAnimate']);
 
 app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
 
@@ -18,6 +18,7 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
         controller: 'TestCtrl',
         templateUrl: 'templates/test.html',
         title: 'TestCtrl',
+        isForward: true
         
     }).when('/dishes/:dishId', {        
         controller: 'TestCtrl',
@@ -33,6 +34,7 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
         controller: 'TestCtrl',
         templateUrl: 'templates/test.html',
         title: 'Errore 404',
+        isForward: true
         
     });
     
@@ -50,6 +52,7 @@ app.controller('SignInCtrl', ['$scope', '$timeout', '$http', '$location', functi
     $scope.signin = function () {
         $scope.signinFormError = null;
         $scope.signinFormBusy = true;
+        $scope.clicked = true;
         $timeout(function() {
             $http.post('http://ulloapi.wslabs.it/api/users/signin', $scope.model).then(function(success) {
                 console.log('signin', success);
@@ -62,6 +65,7 @@ app.controller('SignInCtrl', ['$scope', '$timeout', '$http', '$location', functi
                     $scope.signinFormBusy = false;
                 }, 3000);
             });
+            $scope.clicked = false;
         }, 1000);
     };
     
@@ -130,6 +134,84 @@ app.controller('TestCtrl', ['$scope', '$timeout', '$http', function ($scope, $ti
 
 /*global angular,dynamics*/
 
+
+app.animation('.navigation', ['$rootScope', '$animate', function($rootScope, $animate) {
+    var previousRoute = null;
+    var currentRoute = null;
+    var bezierOptions = {
+        type: dynamics.bezier,
+        points: [{ x: 0, y: 0, cp: [{ x: 0.509, y: 0.007 }] }, { x: 1, y: 1, cp: [{ x: 0.566, y: 0.997 }] }],
+        duration: 500,
+    }
+    $rootScope.$on('$routeChangeSuccess', function(event, current, previous) { // $on per agganciare degli eventi, current e previous fanno riferimento alle sole rotte definite in app.js e non a tutta la pagina
+        previousRoute = previous.$$route; // $$ variabile privata
+        currentRoute = current.$$route;
+    });
+    function isFirstView() {
+        return !currentRoute;
+    }
+    function isBackward() {
+        return previousRoute && previousRoute.isForward;
+    }
+    return {
+        enter: function(element, done) {
+            if (isFirstView()) {
+                // FIRST ENTERING ANIMATION
+                dynamics.css(element[0], {
+                    translateY: 0,
+                    opacity: 0,
+                    scale: 1.2,
+                });
+                dynamics.animate(element[0], {
+                    translateY: 0,
+                    opacity: 1,
+                    scale: 1,
+                }, bezierOptions);
+            } else if (isBackward()) {
+                // BACKWARD ENTERING ANIMATION
+                var w = element[0].offsetWidth;
+                dynamics.css(element[0], {
+                    translateX: -w
+                });
+                dynamics.animate(element[0], {
+                    translateX: 0
+                }, bezierOptions);
+            } else {
+                // FORWARD ENTERING ANIMATION
+                var w = element[0].offsetWidth;
+                dynamics.css(element[0], {
+                    translateX: w
+                });
+                dynamics.animate(element[0], {
+                    translateX: 0
+                }, bezierOptions);
+            }
+            done();
+        },
+        leave: function(element, done) {
+            if (isBackward()) {
+                // BACKWARD EXITING ANIMATION
+                var w = element[0].offsetWidth;
+                dynamics.css(element[0], {
+                    translateX: 0
+                });
+                dynamics.animate(element[0], {
+                    translateX: w
+                }, bezierOptions);
+            } else {
+                // FORWARD EXITING ANIMATION
+                var w = element[0].offsetWidth;
+                dynamics.css(element[0], {
+                    translateX: 0
+                });
+                dynamics.animate(element[0], {
+                    translateX: -w
+                }, bezierOptions);
+            }
+            setTimeout(done, 1000);
+        }
+    }
+}]);
 /*global angular,FB */
 
 var LESSON = true;
@@ -293,11 +375,14 @@ app.config(['$httpProvider', function ($httpProvider) {
       </file>
    </example>
 */
-app.directive('onTap', ['$timeout', function($timeout) {
+
+// le direttive servono per manipolare il dom
+app.directive('onTap', ['$timeout', function($timeout) { // camelcase qui, l'attributo nell'html invece ha un trattino => on-tap
    return {
-      restrict: 'A',
+      restrict: 'A', // A => valida solo come attributo, AEC valida come attributo, elemento e classe <on-tap class="on-tap" on-tap></on-tap>
       link: function(scope, element, attributes, model) {
          function onTap(e) {
+            console.log(attributes);
             element.addClass('tapped');
             $timeout(function() {
                element.removeClass('tapped');

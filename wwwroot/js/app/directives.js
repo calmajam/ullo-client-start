@@ -24,11 +24,14 @@
       </file>
    </example>
 */
-app.directive('onTap', ['$timeout', function($timeout) {
+
+// le direttive servono per manipolare il dom
+app.directive('onTap', ['$timeout', function($timeout) { // camelcase qui, l'attributo nell'html invece ha un trattino => on-tap
    return {
-      restrict: 'A',
+      restrict: 'A', // A => valida solo come attributo, AEC valida come attributo, elemento e classe <on-tap class="on-tap" on-tap></on-tap>
       link: function(scope, element, attributes, model) {
          function onTap(e) {
+            console.log(attributes);
             element.addClass('tapped');
             $timeout(function() {
                element.removeClass('tapped');

@@ -1,6 +1,6 @@
 /*global angular,FB */
 
-var app = angular.module('ullo', ['ngRoute']);
+var app = angular.module('ullo', ['ngRoute', 'ngAnimate']);
 
 app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
 
@@ -18,6 +18,7 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
         controller: 'TestCtrl',
         templateUrl: 'templates/test.html',
         title: 'TestCtrl',
+        isForward: true
         
     }).when('/dishes/:dishId', {        
         controller: 'TestCtrl',
@@ -33,6 +34,7 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
         controller: 'TestCtrl',
         templateUrl: 'templates/test.html',
         title: 'Errore 404',
+        isForward: true
         
     });
     
@@ -50,6 +52,7 @@ app.controller('SignInCtrl', ['$scope', '$timeout', '$http', '$location', functi
     $scope.signin = function () {
         $scope.signinFormError = null;
         $scope.signinFormBusy = true;
+        $scope.clicked = true;
         $timeout(function() {
             $http.post('http://ulloapi.wslabs.it/api/users/signin', $scope.model).then(function(success) {
                 console.log('signin', success);
@@ -62,6 +65,7 @@ app.controller('SignInCtrl', ['$scope', '$timeout', '$http', '$location', functi
                     $scope.signinFormBusy = false;
                 }, 3000);
             });
+            $scope.clicked = false;
         }, 1000);
     };
     
