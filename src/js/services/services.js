@@ -119,6 +119,7 @@ app.factory('FacebookService', ['$q', 'APP', function ($q, APP) {
     return FacebookService;
 }]);
 
+// Oggetto statico - Singleton
 app.factory('Users', ['$q', '$http', '$location', '$timeout', 'APP', 'LocalStorage', 'User', function ($q, $http, $location, $timeout, APP, LocalStorage, User) {
     // PRIVATE VARIABLE FOR CURRENT USER
     var _currentUser = null;

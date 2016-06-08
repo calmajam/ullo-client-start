@@ -1,9 +1,39 @@
 /*global angular,FB,dynamics*/
 
-app.directive('backgroundSplash', [function () {
+app.directive('backgroundSplash', ['Animate', 'Point', function (Animate, Point) {
     return {
         link: function (scope, element, attributes, model) {
-            var aKey;
+            
+            var canvas = element[0];
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            var ctx = canvas.getContext('2d');
+            
+            var items = [], maxItems = 100, pow = 0;
+            while(items.length < maxItems) {
+                items.push(new Point())
+            }
+            
+            var animate = new Animate(function draw(time) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'white';
+                
+                pow += (0 - pow) / 12;
+                
+                angular.forEach(items, function(item, i) {
+                    var d = Math.PI * 2 / items.length * i + time / 1000;
+                    item.draw(ctx, d, canvas.width, canvas.height, pow);
+                });
+                
+                /*for(var i=0; i<18; i++){
+                    var d = Math.PI * 2 / 18 * i + time / 1000;
+                    var x = canvas.width / 2 +100 * Math.cos(d);
+                    var y = canvas.height/ 2 +100 * Math.sin(d);
+                    ctx.fillRect(x, y, 10, 10);   
+                }*/
+            });
+            
+            /*var aKey;
             function draw(time) {                
             }
             function play() {
@@ -28,9 +58,11 @@ app.directive('backgroundSplash', [function () {
                 } else {
                     play();
                 }
-            }
+            }*/
             function onDown(e) {
                 console.log('onDown');
+                pow = 1;
+                //animate.playpause();
             }
             function onMove(e) {
                 // console.log('onMove');
@@ -47,7 +79,7 @@ app.directive('backgroundSplash', [function () {
                 removeListeners();
             });
             addListeners();
-            play();
+            animate.play();
         }
     }
 }]);
