@@ -16,8 +16,49 @@ app.constant('APP', CONFIG);
 
 app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
 
-	// SECURE ROUTING
-    $routeProvider.when('/stream', {
+    // UNSECURE ROUTING
+    $routeProvider.when('/splash', {
+        title: 'Splash',
+        templateUrl: 'templates/splash.html',
+        controller: 'SplashCtrl',
+        controllerAs: 'splashCtrl',
+
+    }).when('/test', {
+        title: 'Test',
+        templateUrl: 'templates/test.html',
+        controller: 'StreamTestCtrl',
+        controllerAs: 'testCtrl',
+
+    }).when('/stream-test', {
+        title: 'Stream Test',
+        templateUrl: 'templates/test.html',
+        controller: 'StreamTestCtrl',
+        controllerAs: 'testCtrl',
+
+    }).when('/signin-test', {
+        title: 'Sign In',
+        templateUrl: 'templates/signin-test.html',
+        controller: 'SignInTestCtrl',
+        controllerAs: 'signinCtrl',
+    }).when('/signin', {
+        title: 'Sign In',
+        templateUrl: 'templates/signin.html',
+        controller: 'SigninCtrl',
+        controllerAs: 'signinCtrl',
+
+    }).when('/signup', {
+        title: 'Sign Up',
+        templateUrl: 'templates/signup.html',
+        controller: 'SignupCtrl',
+        controllerAs: 'signupCtrl',
+
+    }).when('/404', {
+
+        title: 'Error 404',
+        templateUrl: '404.html',
+
+    // SECURE ROUTING
+    }).when('/stream', {
         title: 'Stream',
         templateUrl: 'templates/stream.html',
         controller: 'StreamCtrl',
@@ -88,39 +129,9 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
         },
         isForward: true,
 
-	// UNSECURE ROUTING
-    }).when('/splash', {
-        title: 'Splash',
-        templateUrl: 'templates/splash.html',
-        controller: 'SplashCtrl',
-        controllerAs: 'splashCtrl',
-
-    }).when('/signin', {
-        title: 'Sign In',
-        templateUrl: 'templates/signin.html',
-        controller: 'SigninCtrl',
-        controllerAs: 'signinCtrl',
-
-    }).when('/signup', {
-        title: 'Sign Up',
-        templateUrl: 'templates/signup.html',
-        controller: 'SignupCtrl',
-        controllerAs: 'signupCtrl',
-
-    }).when('/test', {
-        title: 'Test',
-        templateUrl: 'templates/dishes.html',
-        controller: 'TestCtrl',
-        controllerAs: 'testCtrl',
-
-    }).when('/404', {
-
-        title: 'Error 404',
-        templateUrl: '404.html',
-
     });
 
-    $routeProvider.otherwise('/stream');
+    $routeProvider.otherwise('/splash'); // stream
 
     // HTML5 MODE url writing method (false: #/anchor/use, true: /html5/url/use)
     $locationProvider.html5Mode(true);
@@ -131,4 +142,68 @@ app.config(['$httpProvider', function ($httpProvider) {
     
     $httpProvider.defaults.withCredentials = true;
     
+}]);
+
+app.run(['$rootScope', '$window', 'APP', function ($rootScope, $window, APP) {
+
+    $rootScope.standalone = $window.navigator.standalone;
+
+    document.ontouchmove = function (event) {
+        event.preventDefault();
+    }
+
+    window.oncontextmenu = function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        return false;
+    };
+
+    function Picture(route, size) {
+        if (route.indexOf('http') === 0) {
+            return route;
+        } else if (size) {
+            return APP.API + route + '?media=' + size;
+        } else {
+            return APP.API + route;
+        }
+    }
+
+    $rootScope.getPictures = function (model, size) {
+        size;
+        var src = '/img/preview.png';
+        if (!model) {
+            return src;
+        }
+        if (model.pictures) {
+            for (var i = 0; i < model.pictures.length; i++) {
+                var media = model.pictures[i];
+                if (media.route) {
+                    src = Picture(media.route, size);
+                    i = 100000;
+                }
+            }
+        } else if (model.route) {
+            src = Picture(model.route, size);
+        }
+        return src;
+    };
+
+    $rootScope.getPicture = function (model, size) {
+        size;
+        var src = '/img/preview.png';
+        if (!model) {
+            return src;
+        }
+        if (model.picture && model.picture.route) {
+            src = Picture(model.picture.route, size);
+        } else if (model.route) {
+            src = Picture(model.route, size);
+        }
+        return src;
+    };
+
+    $rootScope.broadcast = function (event, params) {
+        $rootScope.$broadcast(event, params);
+    };
+
 }]);

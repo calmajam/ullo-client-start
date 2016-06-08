@@ -1,7 +1,7 @@
 /*global angular,dynamics*/
 
-
 app.animation('.navigation', ['$rootScope', '$animate', function($rootScope, $animate) {
+    
     var previousRoute = null;
     var currentRoute = null;
     var bezierOptions = {
@@ -9,10 +9,12 @@ app.animation('.navigation', ['$rootScope', '$animate', function($rootScope, $an
         points: [{ x: 0, y: 0, cp: [{ x: 0.509, y: 0.007 }] }, { x: 1, y: 1, cp: [{ x: 0.566, y: 0.997 }] }],
         duration: 500,
     }
-    $rootScope.$on('$routeChangeSuccess', function(event, current, previous) { // $on per agganciare degli eventi, current e previous fanno riferimento alle sole rotte definite in app.js e non a tutta la pagina
-        previousRoute = previous.$$route; // $$ variabile privata
+    
+    $rootScope.$on('$routeChangeSuccess', function(event, current, previous) {
+        previousRoute = previous.$$route;
         currentRoute = current.$$route;
     });
+    
     function isFirstView() {
         return !currentRoute;
     }
